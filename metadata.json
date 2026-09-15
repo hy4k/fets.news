@@ -1,0 +1,11 @@
+{
+  "name": "FETS NEWS",
+  "description": "FETS NEWS 24/7 live multi-user broadcast studio and control room integrated with Google Workspace, FETS Google Chat webhook engine, and Google Meet video bridge.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
