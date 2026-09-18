@@ -3,17 +3,16 @@ import {
   Video,
   Monitor,
   Radio,
-  Globe,
   Sliders,
   X,
   Check,
-  Play,
-  TrendingUp,
   Building,
   Layers,
   Link2,
+  ShieldCheck,
+  Cpu,
 } from 'lucide-react';
-import { Participant, LiveFeedSourceType } from '../types';
+import { Participant, LiveFeedSourceType, ExamFeedPreset } from '../types';
 
 interface FeedSourceSelectorModalProps {
   isOpen: boolean;
@@ -25,7 +24,7 @@ interface FeedSourceSelectorModalProps {
     sourceType: LiveFeedSourceType,
     options?: {
       deviceId?: string;
-      preset?: 'satellite_orbit' | 'capitol_skyline' | 'trading_floor' | 'newsroom_hq';
+      preset?: ExamFeedPreset;
       customVideoUrl?: string;
     }
   ) => void;
@@ -48,9 +47,9 @@ export const FeedSourceSelectorModal: React.FC<FeedSourceSelectorModalProps> = (
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>(
     videoDevices[0]?.deviceId || ''
   );
-  const [selectedPreset, setSelectedPreset] = useState<
-    'satellite_orbit' | 'capitol_skyline' | 'trading_floor' | 'newsroom_hq'
-  >(participant?.videoPreset || 'satellite_orbit');
+  const [selectedPreset, setSelectedPreset] = useState<ExamFeedPreset>(
+    participant?.videoPreset || 'test_pod_matrix'
+  );
   const [customUrl, setCustomUrl] = useState<string>(participant?.customVideoUrl || '');
 
   if (!isOpen || !participant) return null;
@@ -145,16 +144,16 @@ export const FeedSourceSelectorModal: React.FC<FeedSourceSelectorModalProps> = (
                 onClick={() => setSelectedType('motion_canvas')}
                 className={`p-3 rounded-lg border text-left flex flex-col justify-between transition-all ${
                   selectedType === 'motion_canvas'
-                    ? 'bg-amber-950/80 border-amber-500 text-white shadow-[0_0_12px_rgba(245,158,11,0.4)]'
+                    ? 'bg-emerald-950/80 border-[#00D084] text-white shadow-[0_0_12px_rgba(0,208,132,0.4)]'
                     : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <Globe className="w-4 h-4 text-amber-400" />
-                  <span className="font-broadcast font-bold text-xs">LIVE MOTION RADAR</span>
+                  <ShieldCheck className="w-4 h-4 text-[#00D084]" />
+                  <span className="font-broadcast font-bold text-xs">EXAM ROOM VISUALIZER</span>
                 </div>
                 <p className="text-[10px] font-tech text-slate-400">
-                  60 FPS real-time animated broadcast radar, audio waves & motion graphics.
+                  Real-time exam pod delivery matrix, candidate intake & acoustic monitor.
                 </p>
               </button>
 
@@ -164,16 +163,16 @@ export const FeedSourceSelectorModal: React.FC<FeedSourceSelectorModalProps> = (
                 onClick={() => setSelectedType('custom_url')}
                 className={`p-3 rounded-lg border text-left flex flex-col justify-between transition-all ${
                   selectedType === 'custom_url'
-                    ? 'bg-emerald-950/80 border-emerald-500 text-white shadow-[0_0_12px_rgba(16,185,129,0.4)]'
+                    ? 'bg-amber-950/80 border-amber-500 text-white shadow-[0_0_12px_rgba(245,158,11,0.4)]'
                     : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <Link2 className="w-4 h-4 text-emerald-400" />
+                  <Link2 className="w-4 h-4 text-amber-400" />
                   <span className="font-broadcast font-bold text-xs">CUSTOM STREAM URL</span>
                 </div>
                 <p className="text-[10px] font-tech text-slate-400">
-                  Live MP4 / WebM video stream or breaking feed URL.
+                  Live MP4 / WebM test session feed or external video stream URL.
                 </p>
               </button>
             </div>
@@ -213,7 +212,7 @@ export const FeedSourceSelectorModal: React.FC<FeedSourceSelectorModalProps> = (
               </span>
               <p className="text-xs text-slate-300">
                 Clicking apply will open the system window picker. You can choose to share your
-                entire screen, a news dashboard tab, or an application window with high-definition 60fps.
+                entire screen, an exam delivery portal, or a lockdown browser screen with 60fps clarity.
               </p>
             </div>
           )}
@@ -222,49 +221,63 @@ export const FeedSourceSelectorModal: React.FC<FeedSourceSelectorModalProps> = (
           {selectedType === 'motion_canvas' && (
             <div className="space-y-2">
               <label className="text-[11px] font-tech text-slate-400 block uppercase">
-                SELECT STUDIO VISUAL THEME:
+                SELECT EXAM VISUALIZATION MODE:
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <button
                   type="button"
-                  onClick={() => setSelectedPreset('satellite_orbit')}
-                  className={`p-2 rounded border text-xs text-left ${
-                    selectedPreset === 'satellite_orbit'
-                      ? 'bg-blue-900/60 border-blue-400 text-white'
-                      : 'bg-slate-900 border-slate-800 text-slate-400'
+                  onClick={() => setSelectedPreset('test_pod_matrix')}
+                  className={`p-2.5 rounded-lg border text-xs text-left transition-all ${
+                    selectedPreset === 'test_pod_matrix' || selectedPreset === 'satellite_orbit'
+                      ? 'bg-[#00D084]/20 border-[#00D084] text-white shadow-[0_0_10px_rgba(0,208,132,0.3)]'
+                      : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
                   }`}
                 >
-                  <Globe className="w-3.5 h-3.5 text-blue-400 mb-1" />
-                  <div className="font-bold text-[11px]">SATELLITE ORBIT</div>
-                  <div className="text-[9px] text-slate-400">3D Globe & Coordinates</div>
+                  <ShieldCheck className="w-4 h-4 text-[#00D084] mb-1.5" />
+                  <div className="font-bold text-[11px] text-white">POD MATRIX</div>
+                  <div className="text-[9px] text-slate-400 leading-tight mt-0.5">Pods P01-P24 Status</div>
                 </button>
 
                 <button
                   type="button"
-                  onClick={() => setSelectedPreset('capitol_skyline')}
-                  className={`p-2 rounded border text-xs text-left ${
-                    selectedPreset === 'capitol_skyline'
-                      ? 'bg-red-900/60 border-red-400 text-white'
-                      : 'bg-slate-900 border-slate-800 text-slate-400'
+                  onClick={() => setSelectedPreset('centre_floor_plan')}
+                  className={`p-2.5 rounded-lg border text-xs text-left transition-all ${
+                    selectedPreset === 'centre_floor_plan' || selectedPreset === 'capitol_skyline'
+                      ? 'bg-blue-950/60 border-blue-400 text-white shadow-[0_0_10px_rgba(59,130,246,0.3)]'
+                      : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
                   }`}
                 >
-                  <Building className="w-3.5 h-3.5 text-red-400 mb-1" />
-                  <div className="font-bold text-[11px]">CAPITOL TOWER</div>
-                  <div className="text-[9px] text-slate-400">Night Beacon & Radar</div>
+                  <Building className="w-4 h-4 text-blue-400 mb-1.5" />
+                  <div className="font-bold text-[11px] text-white">FLOOR PLAN</div>
+                  <div className="text-[9px] text-slate-400 leading-tight mt-0.5">Lab & Environment</div>
                 </button>
 
                 <button
                   type="button"
-                  onClick={() => setSelectedPreset('trading_floor')}
-                  className={`p-2 rounded border text-xs text-left ${
-                    selectedPreset === 'trading_floor'
-                      ? 'bg-emerald-900/60 border-emerald-400 text-white'
-                      : 'bg-slate-900 border-slate-800 text-slate-400'
+                  onClick={() => setSelectedPreset('secure_browser_grid')}
+                  className={`p-2.5 rounded-lg border text-xs text-left transition-all ${
+                    selectedPreset === 'secure_browser_grid' || selectedPreset === 'trading_floor'
+                      ? 'bg-amber-950/60 border-amber-400 text-white shadow-[0_0_10px_rgba(245,158,11,0.3)]'
+                      : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
                   }`}
                 >
-                  <TrendingUp className="w-3.5 h-3.5 text-emerald-400 mb-1" />
-                  <div className="font-bold text-[11px]">FINANCIAL DESK</div>
-                  <div className="text-[9px] text-slate-400">Live Candlestick Ticks</div>
+                  <Cpu className="w-4 h-4 text-amber-400 mb-1.5" />
+                  <div className="font-bold text-[11px] text-white">LOCKDOWN</div>
+                  <div className="text-[9px] text-slate-400 leading-tight mt-0.5">RMA & Ping Diagnostics</div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedPreset('operations_mcr')}
+                  className={`p-2.5 rounded-lg border text-xs text-left transition-all ${
+                    selectedPreset === 'operations_mcr' || selectedPreset === 'newsroom_hq'
+                      ? 'bg-teal-950/60 border-teal-400 text-white shadow-[0_0_10px_rgba(20,184,166,0.3)]'
+                      : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <Radio className="w-4 h-4 text-teal-400 mb-1.5" />
+                  <div className="font-bold text-[11px] text-white">TCA DISPATCH</div>
+                  <div className="text-[9px] text-slate-400 leading-tight mt-0.5">24x7 Branch Command</div>
                 </button>
               </div>
             </div>
@@ -280,7 +293,7 @@ export const FeedSourceSelectorModal: React.FC<FeedSourceSelectorModalProps> = (
                 type="url"
                 value={customUrl}
                 onChange={(e) => setCustomUrl(e.target.value)}
-                placeholder="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                placeholder="https://fets.live/feeds/calicut-command.mp4 or HLS stream URL"
                 className="w-full bg-slate-900 border border-slate-700 text-slate-200 rounded p-2 text-xs font-sans-ui focus:outline-none focus:border-emerald-500"
               />
               <div className="flex gap-1.5 flex-wrap">

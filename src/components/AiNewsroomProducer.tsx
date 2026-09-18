@@ -41,7 +41,7 @@ export const AiNewsroomProducer: React.FC<AiNewsroomProducerProps> = ({
   const [factCheckResult, setFactCheckResult] = useState<FactCheckResult | null>(null);
 
   // Chyron generator state
-  const [topicInput, setTopicInput] = useState(activeTopic || 'Global Economic Transition & AI Summit');
+  const [topicInput, setTopicInput] = useState(activeTopic || 'Calicut & Cochin Morning Shift Handover & Pearson VUE Exam Delivery');
   const [isGeneratingChyron, setIsGeneratingChyron] = useState(false);
   const [generatedChyron, setGeneratedChyron] = useState<{
     headline: string;
@@ -235,7 +235,7 @@ export const AiNewsroomProducer: React.FC<AiNewsroomProducerProps> = ({
                 <textarea
                   value={claimInput}
                   onChange={(e) => setClaimInput(e.target.value)}
-                  placeholder="e.g., 'Oil reserves fell to a 30-year record low and inflation surged by 9% in the second quarter...'"
+                  placeholder="e.g., 'Pearson VUE morning RMA sync completed across all 45 Calicut workstations with zero candidate biometric queue delays...'"
                   className="w-full bg-slate-900 border border-slate-700 text-slate-200 rounded p-3 text-xs font-sans-ui focus:outline-none focus:border-blue-500 h-20 resize-none"
                 />
               </div>

@@ -188,7 +188,7 @@ export const BroadcastVuMeter: React.FC<BroadcastVuMeterProps> = ({
     <div className="relative select-none pointer-events-auto">
       {/* Main Broadcast VU Meter Console Card */}
       <div
-        id={`vu-meter-${participantName.toLowerCase().replace(/\s+/g, '-')}`}
+        id={`vu-meter-${(participantName || 'peer').toLowerCase().replace(/\s+/g, '-')}`}
         className={`bg-black/90 border border-slate-800/90 rounded-md backdrop-blur-md shadow-2xl transition-all ${
           compact ? 'p-1' : 'p-1.5'
         }`}

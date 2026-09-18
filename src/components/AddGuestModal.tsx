@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { UserPlus, X, MapPin, Globe, Check, Video, Monitor, Radio } from 'lucide-react';
-import { Participant, LiveFeedSourceType } from '../types';
+import { UserPlus, X, MapPin, Globe, Check, Video, Monitor, Radio, ShieldCheck } from 'lucide-react';
+import { Participant, LiveFeedSourceType, ExamFeedPreset } from '../types';
 
 interface AddGuestModalProps {
   isOpen: boolean;
@@ -8,41 +8,53 @@ interface AddGuestModalProps {
   onAddGuest: (guest: Omit<Participant, 'id'>) => void;
 }
 
-const PRESET_BUREAUS = [
+const PRESET_BUREAUS: {
+  role: string;
+  location: string;
+  organization: string;
+  ticker: string;
+  themeColor: string;
+  preset: ExamFeedPreset;
+}[] = [
   {
-    role: 'SENIOR DEFENSE CORRESPONDENT',
-    location: 'LIVE • WASHINGTON D.C.',
-    ticker: 'PENTAGON BRIEFING • STRATEGIC ACCORD REVIEW • FEED LOCKED',
-    themeColor: 'from-[#1e293b] to-[#0f172a]',
-    preset: 'capitol_skyline' as const,
+    role: 'LEAD TEST CENTRE ADMINISTRATOR (TCA)',
+    location: 'LIVE • CALICUT CENTRE (45 PODS)',
+    organization: 'FORUM TESTING & EDUCATIONAL SERVICES',
+    ticker: 'CALICUT POD COMMAND • 45/45 WORKSTATIONS OPERATIONAL • ZERO BREACHES',
+    themeColor: 'from-[#06241c] to-[#041611]',
+    preset: 'test_pod_matrix',
   },
   {
-    role: 'CHIEF FINANCIAL ANALYST',
-    location: 'WALL STREET BUREAU • NEW YORK',
-    ticker: 'MARKET CLOSE • NYSE ADVANCES 1.2% • BOND YIELDS STABLE',
-    themeColor: 'from-[#064e3b] to-[#022c22]',
-    preset: 'trading_floor' as const,
+    role: 'SENIOR TEST PROCTOR & CMA SPECIALIST',
+    location: 'LIVE • COCHIN CENTRE (38 PODS)',
+    organization: 'FETS COCHIN BRANCH',
+    ticker: 'PROMETRIC CMA US: 14 SEATS LIVE • CELPIP AUDIO STATIONS CALIBRATED',
+    themeColor: 'from-[#0b1f2b] to-[#05121b]',
+    preset: 'test_pod_matrix',
   },
   {
-    role: 'EUROPEAN BUREAU CHIEF',
-    location: 'LIVE VIA SATELLITE • GENEVA',
-    ticker: 'DIPLOMATIC SUMMIT • 42 DELEGATIONS ASSEMBLE • UPLINK OPTIMAL',
-    themeColor: 'from-[#1e3a8a] to-[#172554]',
-    preset: 'satellite_orbit' as const,
+    role: 'SYSTEMS & RMA INFRASTRUCTURE LEAD',
+    location: 'CENTRAL IT & NETWORK DESK • CALICUT',
+    organization: 'FETS IT INFRASTRUCTURE',
+    ticker: 'PEARSON VUE RMA SYNC: 08:30 IST OK • DUAL FIBRE ROUTERS BALANCED',
+    themeColor: 'from-[#172038] to-[#0d1424]',
+    preset: 'secure_browser_grid',
   },
   {
-    role: 'ASIA-PACIFIC TECH CORRESPONDENT',
-    location: 'TOKYO BUREAU • JAPAN',
-    ticker: 'SEMICONDUCTOR INITIATIVE • NIKKEI FUTURES +180 • 1080p60',
-    themeColor: 'from-[#581c87] to-[#3b0764]',
-    preset: 'trading_floor' as const,
+    role: 'SHIFT HANDOVER COORDINATOR & AUDITOR',
+    location: 'GLOBAL MCR • CENTRAL OPERATIONS',
+    organization: 'FORUM TESTING & EDUCATIONAL SERVICES',
+    ticker: 'SHIFT 6-DAY ROTATION VERIFIED • INTER-BRANCH 24x7 HOTLINE CONNECTED',
+    themeColor: 'from-[#231a08] to-[#140e04]',
+    preset: 'operations_mcr',
   },
   {
-    role: 'SPECIAL INVESTIGATIVE REPORTER',
-    location: 'FIELD FEED • CAPITOL HILL',
-    ticker: 'SENATE HEARINGS UNDERWAY • TESTIMONY ADVANCES • 5G STREAM',
-    themeColor: 'from-[#7c2d12] to-[#451a03]',
-    preset: 'capitol_skyline' as const,
+    role: 'EXTERNAL AUDITOR / VENDOR DESK',
+    location: 'PEARSON VUE / ETS REGIONAL DESK',
+    organization: 'ACCREDITED TEST DELIVERY PARTNER',
+    ticker: 'TEST SECURITY COMPLIANCE: 100% • DVR ARCHIVES SYNCED TO LOCAL VAULT',
+    themeColor: 'from-[#1a1429] to-[#0e0a17]',
+    preset: 'centre_floor_plan',
   },
 ];
 
@@ -54,16 +66,17 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
   const [name, setName] = useState('');
   const [role, setRole] = useState(PRESET_BUREAUS[0].role);
   const [location, setLocation] = useState(PRESET_BUREAUS[0].location);
-  const [organization, setOrganization] = useState('GLOBAL BROADCAST POOL');
+  const [organization, setOrganization] = useState(PRESET_BUREAUS[0].organization);
   const [windowTicker, setWindowTicker] = useState(PRESET_BUREAUS[0].ticker);
   const [feedType, setFeedType] = useState<LiveFeedSourceType>('motion_canvas');
-  const [videoPreset, setVideoPreset] = useState<'satellite_orbit' | 'capitol_skyline' | 'trading_floor' | 'newsroom_hq'>('capitol_skyline');
+  const [videoPreset, setVideoPreset] = useState<ExamFeedPreset>('test_pod_matrix');
 
   if (!isOpen) return null;
 
   const handleSelectPreset = (preset: (typeof PRESET_BUREAUS)[0]) => {
     setRole(preset.role);
     setLocation(preset.location);
+    setOrganization(preset.organization);
     setWindowTicker(preset.ticker);
     setVideoPreset(preset.preset);
   };
@@ -71,6 +84,8 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
+
+    const shortLoc = location.includes('•') ? location.split('•')[1].trim() : location;
 
     onAddGuest({
       name: name.trim().toUpperCase(),
@@ -84,11 +99,11 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
       audioLevel: 0,
       streamType: feedType,
       signalQuality: '1080p60',
-      latencyMs: Math.floor(Math.random() * 40) + 15,
-      cameraLabel: `SAT • ${location.split('•')[0].trim().toUpperCase()}`,
+      latencyMs: Math.floor(Math.random() * 20) + 10,
+      cameraLabel: `TCA • ${shortLoc.toUpperCase()}`,
       windowTicker: windowTicker.trim(),
       videoPreset: videoPreset,
-      themeColor: 'from-[#111827] via-[#1f2937] to-[#0f172a]',
+      themeColor: 'from-[#081814] via-[#0e2a23] to-[#061410]',
     });
 
     setName('');
@@ -145,7 +160,7 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
             <input
               type="text"
               required
-              placeholder="e.g. ELENA VANCE"
+              placeholder="e.g. MITHUN, ANSHITHA K, NAIMA MM"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full bg-slate-900 border border-slate-700 text-white rounded p-2 text-xs font-sans-ui focus:outline-none focus:border-blue-500 uppercase"
@@ -193,8 +208,8 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
                     : 'bg-slate-900 border-slate-800 text-slate-400'
                 }`}
               >
-                <Radio className="w-3.5 h-3.5 text-amber-400 mb-1" />
-                <span className="text-[11px] font-bold">AUDIO VISUALIZER</span>
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 mb-1" />
+                <span className="text-[11px] font-bold">EXAM VISUALIZER</span>
               </button>
 
               <button

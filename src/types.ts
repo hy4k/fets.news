@@ -12,11 +12,23 @@ export type TransitionEffect =
   | 'dissolve'  // Smooth crossfade
   | 'push'      // Slide/push camera
   | 'zoom'      // Matrix 3D scale
-  | 'glitch';   // Satellite digital scanline glitch
+  | 'glitch';   // Signal sync scanline wipe
 
 export type ChyronStyle = 'network' | 'breaking' | 'finance' | 'election' | 'minimal';
 
 export type LiveFeedSourceType = 'webcam' | 'screenshare' | 'motion_canvas' | 'video_loop' | 'custom_url';
+
+export type ExamFeedPreset =
+  | 'test_pod_matrix'      // Interactive pod matrix (P01-P24)
+  | 'centre_floor_plan'    // Test centre architectural floor plan & environment
+  | 'secure_browser_grid'  // Lockdown engine & bandwidth diagnostics
+  | 'operations_mcr'       // 24/7 FETS TCA dispatch & inter-branch command
+  // Backward compatibility aliases
+  | 'satellite_orbit'
+  | 'capitol_skyline'
+  | 'trading_floor'
+  | 'newsroom_hq'
+  | 'geneva_summit';
 
 export interface Participant {
   id: string;
@@ -32,11 +44,11 @@ export interface Participant {
   isSpeaking: boolean;
   audioLevel: number; // 0 to 100
   streamType: LiveFeedSourceType;
-  signalQuality: '1080p60' | '4K UHD' | 'SAT 720p' | 'UPLINK 5G' | 'LIVE 60FPS';
+  signalQuality: '1080p60' | '4K UHD' | 'WAN 720p' | 'FIBRE 1080p' | 'LIVE 60FPS';
   latencyMs: number;
-  cameraLabel: string; // e.g., "CAM 1 • STUDIO A", "SAT 2 • WASHINGTON"
+  cameraLabel: string; // e.g., "CAM 1 • GLOBAL MCR", "TCA 2 • CALICUT LAB A"
   windowTicker: string; // Dedicated subtle ticker for this participant window
-  videoPreset?: 'satellite_orbit' | 'capitol_skyline' | 'trading_floor' | 'newsroom_hq' | 'geneva_summit';
+  videoPreset?: ExamFeedPreset;
   customVideoUrl?: string;
   themeColor: string;
   speechTopic?: string;

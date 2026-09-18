@@ -13,7 +13,7 @@ import firebaseConfig from '../../firebase-applet-config.json';
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
-// Google Workspace Scopes configured for Google Chat & Google Meet
+// Google Workspace Scopes configured for Google Chat & Google Meet (Restricted Scopes)
 export const WORKSPACE_SCOPES = [
   'https://www.googleapis.com/auth/chat.messages',
   'https://www.googleapis.com/auth/chat.messages.create',
@@ -21,11 +21,18 @@ export const WORKSPACE_SCOPES = [
   'https://www.googleapis.com/auth/meetings.space.created',
 ];
 
-const provider = new GoogleAuthProvider();
-WORKSPACE_SCOPES.forEach((scope) => {
-  provider.addScope(scope);
+// Standard provider for general authentication (email, profile, openid) - never fails with 403 access_denied
+export const standardProvider = new GoogleAuthProvider();
+standardProvider.setCustomParameters({
+  prompt: 'select_account',
 });
-provider.setCustomParameters({
+
+// Advanced workspace provider requesting direct Google Chat & Google Meet scopes
+export const workspaceProvider = new GoogleAuthProvider();
+WORKSPACE_SCOPES.forEach((scope) => {
+  workspaceProvider.addScope(scope);
+});
+workspaceProvider.setCustomParameters({
   prompt: 'select_account',
 });
 
@@ -33,6 +40,7 @@ provider.setCustomParameters({
 let isSigningIn = false;
 // Cache the access token in memory ONLY (never stored in localStorage/sessionStorage)
 let cachedAccessToken: string | null = null;
+let hasWorkspacePermissions = false;
 
 // Initialize auth state listener
 export const initAuth = (
@@ -46,6 +54,7 @@ export const initAuth = (
       }
     } else {
       cachedAccessToken = null;
+      hasWorkspacePermissions = false;
       if (onAuthFailure) {
         onAuthFailure();
       }
@@ -53,22 +62,70 @@ export const initAuth = (
   });
 };
 
+export interface GoogleSignInResult {
+  user: User;
+  accessToken: string;
+  hasWorkspaceScopes: boolean;
+  scopeWarning?: string;
+}
+
 // Sign in with Google (triggered by user interaction)
-export const googleSignIn = async (): Promise<{ user: User; accessToken: string } | null> => {
+// Defaults to standard authentication; can optionally request sensitive Workspace scopes
+export const googleSignIn = async (
+  requestWorkspaceScopes = false
+): Promise<GoogleSignInResult | null> => {
   try {
     isSigningIn = true;
-    const result = await signInWithPopup(auth, provider);
+    
+    if (requestWorkspaceScopes) {
+      try {
+        const result = await signInWithPopup(auth, workspaceProvider);
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential?.accessToken || '';
+        cachedAccessToken = token;
+        hasWorkspacePermissions = true;
+        return { user: result.user, accessToken: token, hasWorkspaceScopes: true };
+      } catch (scopeError: any) {
+        const errString = `${scopeError?.code || ''} ${scopeError?.message || ''}`.toLowerCase();
+        // If Google rejects sensitive scopes with 403 / access_denied / restricted app
+        if (errString.includes('access_denied') || errString.includes('403') || errString.includes('unauthorized')) {
+          console.warn('Workspace scopes restricted in GCP Testing mode, falling back to standard profile sign-in:', scopeError);
+          // Fall back to standard sign-in so user is still authenticated
+          const fallbackResult = await signInWithPopup(auth, standardProvider);
+          const fallbackCred = GoogleAuthProvider.credentialFromResult(fallbackResult);
+          const fallbackToken = fallbackCred?.accessToken || '';
+          cachedAccessToken = fallbackToken;
+          hasWorkspacePermissions = false;
+          return {
+            user: fallbackResult.user,
+            accessToken: fallbackToken,
+            hasWorkspaceScopes: false,
+            scopeWarning:
+              'Signed in with standard TCA Google profile. (Google Chat direct API scopes require test user registration in Google Cloud Console; Webhook relay is fully active).',
+          };
+        }
+        throw scopeError;
+      }
+    }
+
+    // Default: Standard Google Sign-in (seamless, no 403 access_denied risk)
+    const result = await signInWithPopup(auth, standardProvider);
     const credential = GoogleAuthProvider.credentialFromResult(result);
     const token = credential?.accessToken || '';
 
     cachedAccessToken = token;
-    return { user: result.user, accessToken: token };
+    hasWorkspacePermissions = false;
+    return { user: result.user, accessToken: token, hasWorkspaceScopes: false };
   } catch (error: any) {
-    console.error('Google Workspace Sign-in error:', error);
+    console.error('Google Sign-in error:', error);
     throw error;
   } finally {
     isSigningIn = false;
   }
+};
+
+export const hasWorkspaceChatScopes = (): boolean => {
+  return hasWorkspacePermissions;
 };
 
 export const getAccessToken = (): string | null => {

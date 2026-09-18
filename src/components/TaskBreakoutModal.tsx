@@ -317,7 +317,7 @@ export const TaskBreakoutModal: React.FC<TaskBreakoutModalProps> = ({
 
         {/* Footer */}
         <div className="p-4 bg-[#05110e] border-t border-[#1b3d36] flex items-center justify-between text-xs font-tech text-[#659185]">
-          <span>LIVE TV NEWSROOM ARCHITECTURE</span>
+          <span>FETS 24/7 TCA COLLABORATION NETWORK</span>
           <span className="text-[#00D084] font-bold">24x7 DESK SYNCHRONIZED</span>
         </div>
       </div>

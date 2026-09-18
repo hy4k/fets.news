@@ -97,7 +97,7 @@ export const OutsideGuestModal: React.FC<OutsideGuestModalProps> = ({
       latencyMs: 18,
       cameraLabel: `GUEST • ${purpose === 'job_interview' ? 'INTERVIEW' : 'COACHING'}`,
       windowTicker: `EXTERNAL GUEST UPLINK • ${name.trim().toUpperCase()} • VERIFIED ADMIT`,
-      videoPreset: purpose === 'job_interview' ? 'newsroom_hq' : 'trading_floor',
+      videoPreset: purpose === 'job_interview' ? 'centre_floor_plan' : 'test_pod_matrix',
       themeColor: purpose === 'job_interview' ? 'from-[#0b1b2b] to-[#08121f]' : 'from-[#1c0f2b] to-[#11081f]',
     });
 

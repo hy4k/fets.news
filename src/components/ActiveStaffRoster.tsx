@@ -22,11 +22,12 @@ interface ActiveStaffRosterProps {
   isOpen: boolean;
   onClose: () => void;
   staffList: StaffMember[];
-  currentUserId: string;
+  currentUserId?: string;
   active1on1PartnerId?: string;
   onStart1on1: (targetStaff: StaffMember) => void;
   onEnd1on1?: () => void;
-  onFocusStaffFeed: (staffName: string) => void;
+  onFocusStaffFeed?: (staffName: string) => void;
+  onFocusFeed?: (staffName: string) => void;
   onAddStaffToStudio: (staff: StaffMember) => void;
 }
 
@@ -34,11 +35,12 @@ export const ActiveStaffRoster: React.FC<ActiveStaffRosterProps> = ({
   isOpen,
   onClose,
   staffList,
-  currentUserId,
+  currentUserId = '',
   active1on1PartnerId,
   onStart1on1,
   onEnd1on1,
   onFocusStaffFeed,
+  onFocusFeed,
   onAddStaffToStudio,
 }) => {
   const [filterCentre, setFilterCentre] = useState<'ALL' | 'CALICUT' | 'COCHIN' | 'GLOBAL MCR'>('ALL');
@@ -46,13 +48,19 @@ export const ActiveStaffRoster: React.FC<ActiveStaffRosterProps> = ({
 
   if (!isOpen) return null;
 
+  const handleFocus = onFocusStaffFeed || onFocusFeed;
+
   const filteredStaff = staffList.filter((staff) => {
     const matchesCentre = filterCentre === 'ALL' || staff.centre === filterCentre;
+    const query = (searchQuery || '').toLowerCase().trim();
+    if (!query) return matchesCentre;
+
     const matchesSearch =
-      staff.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      staff.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      staff.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (staff.dutyRole && staff.dutyRole.toLowerCase().includes(searchQuery.toLowerCase()));
+      (staff.name || '').toLowerCase().includes(query) ||
+      (staff.role || '').toLowerCase().includes(query) ||
+      (staff.location || '').toLowerCase().includes(query) ||
+      Boolean(staff.dutyRole && staff.dutyRole.toLowerCase().includes(query));
+
     return matchesCentre && matchesSearch;
   });
 
@@ -144,7 +152,11 @@ export const ActiveStaffRoster: React.FC<ActiveStaffRosterProps> = ({
       {/* Staff List */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
         {filteredStaff.map((staff) => {
-          const isCurrentUser = staff.id === currentUserId || staff.name.toLowerCase() === currentUserId.toLowerCase();
+          const isCurrentUser = Boolean(
+            currentUserId &&
+              (staff.id === currentUserId ||
+                (staff.name && staff.name.toLowerCase() === currentUserId.toLowerCase()))
+          );
           const isThisIn1on1 = active1on1PartnerId === staff.id;
 
           return (
@@ -255,7 +267,7 @@ export const ActiveStaffRoster: React.FC<ActiveStaffRosterProps> = ({
 
                   {/* Focus Program Camera */}
                   <button
-                    onClick={() => onFocusStaffFeed(staff.name)}
+                    onClick={() => handleFocus?.(staff.name)}
                     className="p-1.5 rounded-xl bg-[#122c26] border border-[#275d50] text-[#7ce2ca] hover:text-white hover:bg-[#1a3e35] transition-all cursor-pointer"
                     title="Focus Camera Feed in Studio"
                   >

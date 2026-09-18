@@ -34,8 +34,8 @@ export const ShareBroadcastModal: React.FC<ShareBroadcastModalProps> = ({
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'FETS NEWS • Live On-Air Broadcast Invitation',
-          text: `Join the live broadcast on FETS NEWS Studio. Enter your name and designation, turn on your camera, and go live!`,
+          title: 'FETS NEWS • 24/7 TCA Live Operational Broadcast Invitation',
+          text: `Join the 24/7 TCA live collaboration desk on FETS NEWS Studio. Enter your name and designation, verify your pod/bureau, and connect live!`,
           url: shareUrl,
         });
       } catch (err) {
@@ -57,10 +57,10 @@ export const ShareBroadcastModal: React.FC<ShareBroadcastModalProps> = ({
             </div>
             <div>
               <h3 className="text-sm font-broadcast font-bold text-white tracking-wider uppercase">
-                INVITE CO-ANCHORS & CORRESPONDENTS
+                INVITE TCAS & TEST DELIVERY PROCTORS
               </h3>
               <p className="text-[11px] font-tech text-slate-400">
-                Share this link for others to join live from desktop or mobile
+                Share this link for staff across Calicut, Cochin & partner branches to connect live
               </p>
             </div>
           </div>

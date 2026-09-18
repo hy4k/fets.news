@@ -119,19 +119,32 @@ export const GoogleChatEngine: React.FC<GoogleChatEngineProps> = ({
 
   if (!isOpen) return null;
 
-  // Handle Google Sign In
-  const handleGoogleSignIn = async () => {
+  const [authScopeWarning, setAuthScopeWarning] = useState<string | null>(null);
+
+  // Handle Google Sign In (Defaults to Standard TCA profile without sensitive scopes)
+  const handleGoogleSignIn = async (withScopes = false) => {
     setIsSigningIn(true);
     setAuthError(null);
+    setAuthScopeWarning(null);
     try {
-      const res = await googleSignIn();
+      const res = await googleSignIn(withScopes);
       if (res?.user) {
         setCurrentUser(res.user);
+        if (res.scopeWarning) {
+          setAuthScopeWarning(res.scopeWarning);
+        }
         playStingerSound();
       }
     } catch (err: any) {
       console.error('Sign-in failure:', err);
-      setAuthError(err?.message || 'Google Sign-In failed. Check popup blockers.');
+      const msg = err?.message || 'Google Sign-In failed.';
+      if (msg.includes('403') || msg.includes('access_denied')) {
+        setAuthError(
+          'Google returned Error 403: access_denied because direct Workspace Chat/Meet scopes are in Testing mode. Standard TCA profile sign-in is available below.'
+        );
+      } else {
+        setAuthError(msg);
+      }
     } finally {
       setIsSigningIn(false);
     }
@@ -213,13 +226,13 @@ export const GoogleChatEngine: React.FC<GoogleChatEngineProps> = ({
       actionType: 'rundown',
       payload: {
         eventType: 'rundown',
-        headline: '📋 FETS NEWSROOM RUN-DOWN',
-        text: teleprompterScript || `Topic: ${activeStoryTopic || 'General Broadcast'}\\nStudio feed in continuous transmission.`,
+        headline: '📋 FETS TCA OPERATIONS BRIEFING',
+        text: teleprompterScript || `Topic: ${activeStoryTopic || 'General Operations'}\nTCA desk in continuous 24/7 transmission.`,
         broadcastData: {
-          topic: activeStoryTopic || 'Daily Rundown',
-          anchorName: activeSpeakerName || currentUser?.displayName || 'Studio Anchor',
+          topic: activeStoryTopic || 'Daily Briefing',
+          anchorName: activeSpeakerName || currentUser?.displayName || 'Lead TCA',
         },
-        senderName: currentUser?.displayName || 'FETS Newsroom Director',
+        senderName: currentUser?.displayName || 'FETS Central Operations Director',
       },
     });
   };
@@ -236,7 +249,7 @@ export const GoogleChatEngine: React.FC<GoogleChatEngineProps> = ({
       payload: {
         eventType: 'general',
         text: customText.trim(),
-        senderName: currentUser?.displayName || 'FETS Newsroom Desk',
+        senderName: currentUser?.displayName || 'FETS Central Command Desk',
       },
     });
   };
@@ -415,10 +428,20 @@ export const GoogleChatEngine: React.FC<GoogleChatEngineProps> = ({
             </div>
           </div>
 
-          {authError && (
-            <p className="text-xs font-tech text-amber-400 bg-amber-950/40 p-2 rounded border border-amber-800/40">
-              {authError}
+          {authScopeWarning && (
+            <p className="text-xs font-tech text-cyan-300 bg-cyan-950/40 p-2.5 rounded border border-cyan-800/40">
+              ℹ️ {authScopeWarning}
             </p>
+          )}
+
+          {authError && (
+            <div className="text-xs font-tech text-amber-300 bg-amber-950/50 p-2.5 rounded border border-amber-700/50 space-y-1">
+              <p className="font-bold">⚠️ Google Authentication Notice</p>
+              <p>{authError}</p>
+              <p className="text-[11px] text-amber-400/80">
+                Tip: You can use direct <strong>Webhook Mode</strong> without signing in to dispatch messages to the FETS Google Chat Space.
+              </p>
+            </div>
           )}
 
           {/* Section 2: Quick Broadcast Actions to FETS Space */}
@@ -548,14 +571,14 @@ export const GoogleChatEngine: React.FC<GoogleChatEngineProps> = ({
           <div className="bg-[#0b1224] border border-blue-900/40 rounded-lg p-4">
             <h3 className="text-xs font-tech text-slate-300 font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5">
               <Send className="w-3.5 h-3.5 text-blue-400" />
-              DISPATCH NEWSROOM DIRECTIVE TO FETS SPACE
+              DISPATCH OPERATIONAL DIRECTIVE TO FETS SPACE
             </h3>
 
             <form onSubmit={handleDispatchCustom} className="space-y-3">
               <textarea
                 value={customText}
                 onChange={(e) => setCustomText(e.target.value)}
-                placeholder="Type transmission for the FETS Google Chat group (e.g., 'Anchor transitioning to Guest 2 on Cam 3', 'Live segment begins in 60 seconds')..."
+                placeholder="Type operational directive for FETS Google Chat group (e.g., 'Calicut Centre Pod 14 RMA sync complete', 'Pearson VUE afternoon admissions verified on schedule')..."
                 rows={3}
                 className="w-full bg-slate-950/90 border border-slate-800 rounded-lg p-2.5 text-xs text-white placeholder-slate-500 font-mono focus:outline-none focus:border-blue-500 transition-colors"
               />

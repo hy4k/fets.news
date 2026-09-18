@@ -83,12 +83,12 @@ export const DirectorSwitcher: React.FC<DirectorSwitcherProps> = ({
   onOpenGoogleChat,
 }) => {
   const layouts: { mode: BroadcastViewMode; label: string; icon: React.ReactNode }[] = [
-    { mode: 'solo', label: 'ANCHOR SOLO', icon: <Maximize2 className="w-4 h-4" /> },
-    { mode: 'split', label: '2-BOX SPLIT', icon: <Columns className="w-4 h-4" /> },
-    { mode: 'triple', label: '3-BOX PANEL', icon: <Layout className="w-4 h-4" /> },
-    { mode: 'quad', label: '4-BOX QUAD', icon: <Grid className="w-4 h-4" /> },
-    { mode: 'hero', label: 'HERO + STRIP', icon: <Layers className="w-4 h-4" /> },
-    { mode: 'matrix', label: '6-BOX MATRIX', icon: <Grid className="w-4 h-4" /> },
+    { mode: 'solo', label: 'TCA SOLO FOCUS', icon: <Maximize2 className="w-4 h-4" /> },
+    { mode: 'split', label: '2-DESK SPLIT (BRANCH COLLAB)', icon: <Columns className="w-4 h-4" /> },
+    { mode: 'triple', label: '3-BRANCH TRIO', icon: <Layout className="w-4 h-4" /> },
+    { mode: 'quad', label: '4-CENTRE QUAD MATRIX', icon: <Grid className="w-4 h-4" /> },
+    { mode: 'hero', label: 'PRIMARY DESK + POD STRIP', icon: <Layers className="w-4 h-4" /> },
+    { mode: 'matrix', label: '6-STATION EXAM GRID', icon: <Grid className="w-4 h-4" /> },
   ];
 
   const transitions: { effect: TransitionEffect; label: string }[] = [
@@ -96,7 +96,7 @@ export const DirectorSwitcher: React.FC<DirectorSwitcherProps> = ({
     { effect: 'dissolve', label: 'DISSOLVE' },
     { effect: 'push', label: 'CAMERA PUSH' },
     { effect: 'zoom', label: 'MATRIX ZOOM' },
-    { effect: 'glitch', label: 'SAT GLITCH' },
+    { effect: 'glitch', label: 'SIGNAL SYNC' },
   ];
 
   // Set of participant IDs that are currently on-air in program feed
@@ -148,11 +148,16 @@ export const DirectorSwitcher: React.FC<DirectorSwitcherProps> = ({
       <div>
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-[#204a3f]">
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#FFC72C] animate-ping" />
-            <h2 className="font-fets-title font-black text-lg text-white tracking-wider uppercase">
-              VISION MIXER / DIRECTOR
-            </h2>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-[#FFC72C] animate-ping" />
+              <h2 className="font-fets-title font-black text-lg text-white tracking-wider uppercase">
+                TCA STATION SWITCHER & FEED MATRIX
+              </h2>
+            </div>
+            <p className="text-[11px] font-tech text-[#7ce2ca] mt-0.5">
+              Live multi-desk routing, pod screen composition & operational tally
+            </p>
           </div>
           <button
             onClick={onClose}
@@ -165,7 +170,7 @@ export const DirectorSwitcher: React.FC<DirectorSwitcherProps> = ({
         {/* 1. Camera View Modes */}
         <div className="mt-4">
           <label className="text-[11px] font-tech text-[#659487] font-bold uppercase tracking-wider block mb-2">
-            BROADCAST CAMERA COMPOSITION
+            TCA DESK & MONITOR COMPOSITION
           </label>
           <div className="grid grid-cols-2 gap-2">
             {layouts.map((item) => (
@@ -218,7 +223,7 @@ export const DirectorSwitcher: React.FC<DirectorSwitcherProps> = ({
           <div className="mt-5">
             <div className="flex items-center justify-between mb-2">
               <label className="text-[11px] font-tech text-[#659487] font-bold uppercase tracking-wider">
-                STUDIO FEEDS & TALLY (CLICK TO CUT)
+                TCA LIVE FEEDS & TALLY (CLICK TO CUT)
               </label>
               <span className="text-[10px] font-tech text-red-400 font-semibold">
                 RED = ACTIVE / ON-AIR
@@ -309,9 +314,9 @@ export const DirectorSwitcher: React.FC<DirectorSwitcherProps> = ({
           >
             <div className="flex items-center gap-2">
               <Flame className="w-4 h-4 text-[#FFC72C]" />
-              <span>BREAKING NEWS MODE</span>
+              <span>BREAKING INCIDENT ALERT</span>
             </div>
-            <span className="text-xs font-tech">{isBreakingNews ? 'ON AIR [HOT]' : 'STANDBY'}</span>
+            <span className="text-xs font-tech">{isBreakingNews ? 'ON AIR [ALERT]' : 'STANDBY'}</span>
           </button>
 
           {/* Auto Director Toggle */}
@@ -428,7 +433,7 @@ export const DirectorSwitcher: React.FC<DirectorSwitcherProps> = ({
             className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-[#0c231e] hover:bg-[#12332c] text-[#9bd9cb] border border-[#1f4e42] text-xs font-fets-title font-bold tracking-wider cursor-pointer transition-all"
           >
             <FileText className="w-4 h-4 text-[#00D084]" />
-            <span>ANCHOR TELEPROMPTER DESK</span>
+            <span>OPERATIONAL BRIEFING PROMPTER</span>
           </button>
         </div>
       </div>
@@ -436,7 +441,7 @@ export const DirectorSwitcher: React.FC<DirectorSwitcherProps> = ({
       {/* Anchor / Host Camera Hardware Dock at bottom */}
       <div className="mt-6 pt-3 border-t border-[#1f4a3f]">
         <label className="text-[10px] font-tech text-[#4e796e] uppercase tracking-wider block mb-1.5">
-          ANCHOR PHYSICAL HARDWARE
+          DIRECTOR / TCA LOCAL HARDWARE
         </label>
         <div className="flex items-center gap-2">
           <button

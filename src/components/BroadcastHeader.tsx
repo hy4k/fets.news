@@ -267,11 +267,11 @@ export const BroadcastHeader: React.FC<BroadcastHeaderProps> = ({
             <span className="hidden md:inline">SWITCHER</span>
           </button>
 
-          {/* On-Air Anchor Accreditation Button */}
+          {/* On-Air TCA Administrator Accreditation Button */}
           <button
             onClick={onOpenAccreditation}
             className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[#27584e] bg-[#0d221e]/80 hover:bg-[#14322c] text-slate-200 hover:text-white text-xs font-fets-title transition-all cursor-pointer"
-            title="Anchor credentials & camera input settings"
+            title="TCA Administrator credentials & camera input settings"
           >
             <div className="w-4 h-4 rounded-full bg-[#FFC72C] text-[#081412] font-black text-[10px] flex items-center justify-center">
               {userInitial}

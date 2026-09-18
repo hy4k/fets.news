@@ -174,8 +174,8 @@ export const BroadcastAccreditationModal: React.FC<BroadcastAccreditationModalPr
 
     onComplete({
       name: name.trim(),
-      designation: designation.trim() || 'Broadcaster',
-      location: location.trim() || 'STUDIO A',
+      designation: designation.trim() || 'Test Centre Administrator (TCA)',
+      location: location.trim() || 'GLOBAL MCR • CALICUT COMMAND',
       cameraEnabled,
       micEnabled,
       stream: previewStream,
@@ -197,10 +197,10 @@ export const BroadcastAccreditationModal: React.FC<BroadcastAccreditationModalPr
             </div>
             <div>
               <h2 className="text-sm font-fets-title font-bold tracking-wider text-white uppercase">
-                {isJoiningViaLink ? 'GUEST ACCREDITATION • LIVE UPLINK' : 'STUDIO BROADCAST ACCREDITATION'}
+                {isJoiningViaLink ? 'GUEST ACCREDITATION • LIVE UPLINK' : 'TCA OPERATIONAL DESK ACCREDITATION'}
               </h2>
               <p className="text-[11px] font-tech text-[#689487]">
-                Register on-air credentials for live camera window & lower-third graphics
+                Register TCA staff credentials for 24/7 live video desk & lower-third chyrons
               </p>
             </div>
           </div>
@@ -238,7 +238,7 @@ export const BroadcastAccreditationModal: React.FC<BroadcastAccreditationModalPr
                 <VideoOff className="w-8 h-8 text-slate-600 mb-1.5" />
                 <span className="text-xs font-tech text-slate-400 font-bold">CAMERA OFF / STANDBY FEED</span>
                 <span className="text-[10px] font-sans text-slate-500 max-w-xs mt-0.5">
-                  Your animated radar feed will be displayed until you turn on your camera.
+                  Your animated test room visualizer feed will be displayed until you turn on your camera.
                 </span>
               </div>
             )}
@@ -361,7 +361,7 @@ export const BroadcastAccreditationModal: React.FC<BroadcastAccreditationModalPr
               required
               value={designation}
               onChange={(e) => setDesignation(e.target.value)}
-              placeholder="e.g. Lead News Anchor, Senior Correspondent"
+              placeholder="e.g. Lead Test Centre Administrator (TCA), Senior Proctor"
               className="w-full bg-slate-900/90 border border-slate-700 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded px-3 py-2 text-white font-sans text-sm outline-none transition-all placeholder:text-slate-600"
             />
 
@@ -395,7 +395,7 @@ export const BroadcastAccreditationModal: React.FC<BroadcastAccreditationModalPr
                 type="text"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                placeholder="e.g. STUDIO A • NEW YORK or LONDON BUREAU"
+                placeholder="e.g. CALICUT COMMAND DESK or COCHIN PROCTOR HUB"
                 className="w-full pl-8 bg-slate-900/90 border border-slate-700 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded px-3 py-2 text-white font-sans text-sm outline-none transition-all placeholder:text-slate-600"
               />
             </div>

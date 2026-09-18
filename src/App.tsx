@@ -4,6 +4,7 @@ import {
   TransitionEffect,
   Participant,
   LiveFeedSourceType,
+  ExamFeedPreset,
 } from './types';
 import { BroadcastHeader } from './components/BroadcastHeader';
 import { TransitionManager } from './components/TransitionManager';
@@ -67,7 +68,7 @@ const INITIAL_PARTICIPANTS: Participant[] = [
     latencyMs: 8,
     cameraLabel: 'CAM 1 [DIRECTOR - GLOBAL MCR]',
     windowTicker: 'PROGRAM FEED 1 • GLOBAL MCR MASTER • CALICUT & COCHIN COMMAND • AUDIO STEREO 48kHz • ON AIR',
-    videoPreset: 'newsroom_hq',
+    videoPreset: 'operations_mcr',
     themeColor: 'from-[#0b1329] via-[#1e293b] to-[#0f172a]',
     speechTopic: 'Morning shift operational briefing, candidate intake & RMA synchronization',
   },
@@ -83,7 +84,7 @@ const INITIAL_PARTICIPANTS: Participant[] = [
     isSpeaking: false,
     audioLevel: 0,
     streamType: 'motion_canvas',
-    videoPreset: 'capitol_skyline',
+    videoPreset: 'centre_floor_plan',
     signalQuality: '1080p60',
     latencyMs: 14,
     cameraLabel: 'CAM 2 • CALICUT LAB A',
@@ -103,7 +104,7 @@ const INITIAL_PARTICIPANTS: Participant[] = [
     isSpeaking: false,
     audioLevel: 0,
     streamType: 'motion_canvas',
-    videoPreset: 'trading_floor',
+    videoPreset: 'test_pod_matrix',
     signalQuality: '1080p60',
     latencyMs: 22,
     cameraLabel: 'CAM 3 • COCHIN LAB 1',
@@ -123,7 +124,7 @@ const INITIAL_PARTICIPANTS: Participant[] = [
     isSpeaking: false,
     audioLevel: 0,
     streamType: 'motion_canvas',
-    videoPreset: 'satellite_orbit',
+    videoPreset: 'secure_browser_grid',
     signalQuality: 'LIVE 60FPS',
     latencyMs: 12,
     cameraLabel: 'CAM 4 • SERVER & RMA CONSOLE',
@@ -541,7 +542,7 @@ export default function App() {
     sourceType: LiveFeedSourceType,
     options?: {
       deviceId?: string;
-      preset?: 'satellite_orbit' | 'capitol_skyline' | 'trading_floor' | 'newsroom_hq';
+      preset?: ExamFeedPreset;
       customVideoUrl?: string;
     }
   ) => {
@@ -713,14 +714,17 @@ export default function App() {
 
     // Ensure target staff is present in program feeds
     setParticipants((prev) => {
-      const exists = prev.some((p) => p.name.toUpperCase().includes(targetStaff.name.toUpperCase()) || p.id === targetStaff.id);
+      const targetUpper = (targetStaff?.name || '').toUpperCase();
+      const exists = prev.some(
+        (p) => (p.name || '').toUpperCase().includes(targetUpper) || p.id === targetStaff?.id
+      );
       if (exists) {
         return prev;
       }
       const newP: Participant = {
         id: targetStaff.id,
-        name: targetStaff.name.toUpperCase(),
-        role: targetStaff.role.toUpperCase(),
+        name: (targetStaff.name || 'STAFF').toUpperCase(),
+        role: (targetStaff.role || 'TCA').toUpperCase(),
         designation: targetStaff.department,
         organization: targetStaff.centre,
         location: targetStaff.location,
@@ -732,15 +736,15 @@ export default function App() {
         streamType: 'motion_canvas',
         signalQuality: '1080p60',
         latencyMs: 14,
-        cameraLabel: `INTERCOM • ${targetStaff.name.toUpperCase()}`,
-        windowTicker: `24/7 INTERCOM • ${targetStaff.name.toUpperCase()} • DIRECT DESK LINE`,
-        videoPreset: 'trading_floor',
+        cameraLabel: `INTERCOM • ${(targetStaff.name || 'STAFF').toUpperCase()}`,
+        windowTicker: `24/7 INTERCOM • ${(targetStaff.name || 'STAFF').toUpperCase()} • DIRECT DESK LINE`,
+        videoPreset: 'test_pod_matrix',
         themeColor: 'from-[#172554] via-[#1e3a8a] to-[#0f172a]',
       };
       return [...prev, newP];
     });
 
-    const topicStr = `1-ON-1 INTERCOM: ${userName.toUpperCase()} ↔ ${targetStaff.name.toUpperCase()} • 24/7 DIRECT LINE`;
+    const topicStr = `1-ON-1 INTERCOM: ${(userName || 'TCA').toUpperCase()} ↔ ${(targetStaff.name || 'STAFF').toUpperCase()} • 24/7 DIRECT LINE`;
     setStoryTopic(topicStr);
     setTickers((prev) => [
       `1-ON-1 INTERCOM CONNECTED: ${userName} and ${targetStaff.name} on direct line • All 8 staff reachable 24/7`,
@@ -813,7 +817,9 @@ export default function App() {
   };
 
   const handleFocusStaffFeed = (staffName: string) => {
-    const found = participants.find((p) => p.name.toLowerCase().includes(staffName.toLowerCase()));
+    if (!staffName) return;
+    const search = staffName.toLowerCase().trim();
+    const found = participants.find((p) => (p.name || '').toLowerCase().includes(search));
     if (found) {
       handleSelectSpeaker(found.id);
     }
@@ -1186,9 +1192,11 @@ export default function App() {
         isOpen={isStaffRosterOpen}
         onClose={() => setIsStaffRosterOpen(false)}
         staffList={staffList}
+        currentUserId={userName}
         active1on1PartnerId={active1on1Partner?.id}
         onStart1on1={handleStart1on1}
         onEnd1on1={handleEnd1on1}
+        onFocusStaffFeed={handleFocusStaffFeed}
         onFocusFeed={handleFocusStaffFeed}
         onAddStaffToStudio={handleAddStaffToStudio}
       />

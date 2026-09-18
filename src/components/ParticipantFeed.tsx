@@ -182,11 +182,11 @@ export const ParticipantFeed: React.FC<ParticipantFeedProps> = ({
           />
         )}
 
-        {/* CASE D: BROADCAST MOTION RADAR / TELEMETRY CANVAS (60FPS Active Broadcast Visualizer) */}
+        {/* CASE D: BROADCAST EXAM FLOOR / TEST ROOM VISUALIZER (60FPS Active Broadcast Visualizer) */}
         {participant.streamType === 'motion_canvas' && (
           <BroadcastMotionCanvas
             participant={participant}
-            preset={participant.videoPreset || 'satellite_orbit'}
+            preset={participant.videoPreset || 'test_pod_matrix'}
             isSpeaking={participant.isSpeaking}
             audioLevel={participant.audioLevel}
           />
@@ -247,7 +247,7 @@ export const ParticipantFeed: React.FC<ParticipantFeedProps> = ({
               onOpenFeedSelector?.(participant);
             }}
             className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-tech font-semibold uppercase tracking-wider bg-[#0d221e]/90 hover:bg-[#14352f] text-[#FFC72C] border border-[#2b5e52] hover:border-[#FFC72C] transition-colors shadow-sm cursor-pointer"
-            title="Configure Live Feed Signal (Camera, Screen, Stream, Radar)"
+            title="Configure Live Feed Signal (Camera, Screen, Stream, Exam Visualizer)"
           >
             <Sliders className="w-2.5 h-2.5 text-[#FFC72C]" />
             <span className="hidden sm:inline">INPUT:</span>
@@ -258,7 +258,7 @@ export const ParticipantFeed: React.FC<ParticipantFeedProps> = ({
                 ? 'SCREEN'
                 : participant.streamType === 'custom_url'
                 ? 'STREAM'
-                : 'RADAR'}
+                : 'VISUALIZER'}
             </span>
           </button>
 
